@@ -1,8 +1,10 @@
 class ddf($version = "enterprise-2.1.0.ALPHA3") {
 
 	package{ "unzip": ensure => installed }
-	package{ "openjdk-6-jre-headless": ensure => installed}
+	package{ "openjdk-6-jre-headless": ensure => installed }
+	package{ "postgresql-9.1-postgis": ensure => installed }
 
+	service { "postgres": ensure => running }
 	user { "ddf":
 		ensure => 'present'
 	}
