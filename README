@@ -1,0 +1,3 @@
+puppet-ddf
+
+A Puppet module for deploying a DDF node.
