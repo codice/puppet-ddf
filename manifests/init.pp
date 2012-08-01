@@ -13,8 +13,8 @@ class ddf($version = "enterprise-2.1.0.ALPHA3") {
 	exec { "get_ddf":
 		cwd => "/tmp",
 		command => "wget https://dl.dropbox.com/u/1627760/package-${version}.zip -O ddf.zip",
-		creates => "/tmp/ddf.zip"
-
+		creates => "/tmp/ddf.zip",
+		timeout => 600,
 	}
 
 	exec { "unzip /tmp/ddf.zip":

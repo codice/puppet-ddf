@@ -17,6 +17,9 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 
+# This is a hack to set it before Karaf starts
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64
+
 # Application
 APP_NAME="DDF"
 APP_LONG_NAME="DDF"
