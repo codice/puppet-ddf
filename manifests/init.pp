@@ -1,13 +1,26 @@
 class ddf($package = "enterprise",
 		  $version = "2.1.0.ALPHA3") {
 
+	case $operatingsystem {
+		centos: {
+			package{ "postgresql": ensure => installed }
+			package{ "java": name => "java-1.6.0-openjdk", ensure => installed}
+			$java_home = "/usr/lib/jvm/jre-1.6.0-openjdk.x86_64"
+		}
+		ubuntu: {
+			package{ "java": name => "openjdk-6-jre-headless", ensure => installed }
+
+			# Unfortunately this only exists in Ubuntu
+			package{ "postgresql-9.1-postgis": ensure => installed }
+
+			$java_home = "/usr/lib/jvm/java-6-openjdk-amd64les"
+		}
+	}
+
+
 	# Ensure system dependencies are installed
 	package{ "unzip": ensure => installed }
-	package{ "openjdk-6-jre-headless": ensure => installed }
-	package{ "postgresql-9.1-postgis": ensure => installed }
-
-	service { "postgresql": ensure => running }
-
+	
 	user { "ddf":
 		ensure => 'present'
 	}
@@ -48,7 +61,7 @@ class ddf($package = "enterprise",
 
 	# Setup the system service
 	file { "/etc/init.d/ddf":
-		source => "puppet:///modules/ddf/ddf",
+		content => template("ddf/ddf.erb"),
 		require => File["/usr/local/ddf-${package}-${version}"],
 		mode => 755
 	}
