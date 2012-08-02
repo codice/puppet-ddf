@@ -1,6 +1,10 @@
-puppet-ddf
+# puppet-ddf
 
 A Puppet module for deploying a DDF node.
+
+---
+
+**Currently only supports deployment in Ubuntu**
 
 Once deployed, access is available via SSH to port 8101 on the remote node.  User credentials are specified in the ${ddf_home}/etc/users.properties file.
 
