@@ -3,7 +3,7 @@ class ddf($package = "enterprise",
 
 	case $operatingsystem {
 		centos: {
-			package{ "postgresql": ensure => installed }
+			package{ "postgresql-server": ensure => installed }
 			package{ "java": name => "java-1.6.0-openjdk", ensure => installed}
 			$java_home = "/usr/lib/jvm/jre-1.6.0-openjdk.x86_64"
 		}
