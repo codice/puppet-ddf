@@ -18,9 +18,9 @@
 #********************************************************************
 # Wrapper Properties
 #********************************************************************
-set.default.KARAF_HOME=/usr/local/ddf-<%= @version %>
-set.default.KARAF_BASE=/usr/local/ddf-<%= @version %>
-set.default.KARAF_DATA=/usr/local/ddf-<%= @version %>/data
+set.default.KARAF_HOME=/usr/local/ddf-<%= @package %>-<%= @version %>
+set.default.KARAF_BASE=/usr/local/ddf-<%= @package %>-<%= @version %>
+set.default.KARAF_DATA=/usr/local/ddf-<%= @package %>-<%= @version %>/data
 
 # Java Application
 wrapper.working.dir=%KARAF_BASE%
