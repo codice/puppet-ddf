@@ -4,7 +4,9 @@ A Puppet module for deploying a DDF node.
 
 ---
 
-**Currently only supports deployment in Ubuntu**
+**Currently only supports initial deployment, and no subsequent Feature
+action.  It is possible to extend this module with the provisioning of
+the various configuration files required by Karaf and DDF.**
 
 Once deployed, access is available via SSH to port 8101 on the remote node.  User credentials are specified in the ${ddf_home}/etc/users.properties file.
 
