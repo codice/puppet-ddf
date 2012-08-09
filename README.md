@@ -1,6 +1,6 @@
 # puppet-ddf
 
-A Puppet module for deploying a DDF node.
+A Puppet module for deploying a basic/raw DDF node.
 
 ---
 
@@ -8,9 +8,11 @@ A Puppet module for deploying a DDF node.
 action.  It is possible to extend this module with the provisioning of
 the various configuration files required by Karaf and DDF.**
 
-Once deployed, access is available via SSH to port 8101 on the remote node.  User credentials are specified in the ${ddf_home}/etc/users.properties file.
+Once deployed, DDF access is available via SSH to port 8101 on the remote node.  User credentials are specified in the remote ${ddf_home}/etc/users.properties file.
 
-In order for Puppet client to download the DDF package from MACE you must add a 'wgetrc' file to the files/ subdirectory in the module and include the following:
+---
+
+In order for Puppet client to download the DDF package from [MACE](http://www.macefusion.com/) you must add a 'wgetrc' file to the files/ subdirectory in the module and include the following:
 
 ```
 user=Your_MACE_username
@@ -28,3 +30,25 @@ Ensure the proper mode for the wgetrc file on the PuppetMaster side to prevent r
 anyone other than the user running the PuppetMaster.  In local development environments 
 (e.g. Vagrant) this is equally important.
 ```
+
+---
+
+I happen to be using this with [Vagrant](http://vagrantup.com) to rapidly provision a basic Ubuntu server with a DDF environment.
+
+My manifest is super simple:
+
+```
+group { "puppet":
+  ensure => "present",
+}
+
+Exec {
+  path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+}
+
+class { "ddf": }
+```
+
+---
+
+The DDF module is currently including the installation of PostgreSQL.  It isn't really required, and will likely be removed in the near future.
