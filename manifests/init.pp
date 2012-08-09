@@ -13,7 +13,7 @@ class ddf($package = "enterprise",
 			# Unfortunately this only exists in Ubuntu
 			package{ "postgresql-9.1-postgis": ensure => installed }
 
-			$java_home = "/usr/lib/jvm/java-6-openjdk-amd64les"
+			$java_home = "/usr/lib/jvm/java-6-openjdk-amd64"
 		}
 	}
 
