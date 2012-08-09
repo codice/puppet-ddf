@@ -24,5 +24,7 @@ The local ```./files/wgetrc``` file will get deployed to the target's ```/root/.
 The wgetrc file you create is in the .gitignore file so it won't accidentally get committed to the SCM repo.
 
 ```
-Ensure the proper mode for the wgetrc file on the PuppetMaster side to prevent readability by anyone other than the user running the PuppetMaster.  In local development environments (e.g. Vagrant) this is equally important.
+Ensure the proper mode for the wgetrc file on the PuppetMaster side to prevent readability by
+anyone other than the user running the PuppetMaster.  In local development environments 
+(e.g. Vagrant) this is equally important.
 ```
