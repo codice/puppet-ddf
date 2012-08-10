@@ -4,19 +4,21 @@ class ddf($package = "enterprise",
 	case $operatingsystem {
 		centos: {
 			package{ "postgresql-server": ensure => installed }
-			package{ "java": name => "java-1.6.0-openjdk", ensure => installed}
+			package{ "java": name => "java-1.6.0-openjdk", ensure => installed }
 			$java_home = "/usr/lib/jvm/jre-1.6.0-openjdk.x86_64"
 		}
-		ubuntu: {
+		ubuntu: { 
+			exec { "apt-get update": } ->
 			package{ "java": name => "openjdk-6-jre-headless", ensure => installed }
 
 			# Unfortunately this only exists in Ubuntu
 			package{ "postgresql-9.1-postgis": ensure => installed }
 
 			$java_home = "/usr/lib/jvm/java-6-openjdk-amd64"
+
+
 		}
 	}
-
 
 	# Ensure system dependencies are installed
 	package{ "unzip": ensure => installed }
@@ -101,3 +103,4 @@ class ddf($package = "enterprise",
 
 
 }
+
