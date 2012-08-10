@@ -1,5 +1,5 @@
 class ddf($package = "enterprise",
-		  $version = "2.1.0.ALPHA3") {
+		  $version = "2.1.0.ALPHA4") {
 
 	case $operatingsystem {
 		centos: {
