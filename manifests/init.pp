@@ -1,5 +1,5 @@
-class ddf($package = "enterprise",
-		  $version = "2.1.0.ALPHA4") {
+class ddf($package = "ddf-enterprise",
+		  $version = "2.1.0.ALPHA7") {
 
 	case $operatingsystem {
 		centos: {
@@ -37,24 +37,24 @@ class ddf($package = "enterprise",
 
 	exec { "get_ddf":
 		cwd => "/tmp",
-		command => "wget https://visualsvn.macefusion.com/svn/DDF/file_releases/ddf/${version}/package-${package}-${version}.zip -O ddf.zip --no-check-certificate",
+		command => "wget https://visualsvn.macefusion.com/svn/DDF/file_releases/ddf/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
 		creates => "/tmp/ddf.zip",
-		timeout => 600,
+		timeout => 3600,
 		require => File["set_wgetrc"]
 	}
 
 	exec { "rm /root/.wgetrc":
 		require => Exec["get_ddf"]
-	}
+	} 
 
 	# Unpack the DDF distribution
 	exec { "unzip /tmp/ddf.zip":
 		cwd => "/usr/local",
-		creates => "/usr/local/ddf-${package}-${version}",
+		creates => "/usr/local/${package}-${version}",
 		require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
 	}
 
-	file { "/usr/local/ddf-${package}-${version}":
+	file { "/usr/local/${package}-${version}":
 		owner => "ddf",
 		group => "ddf",
 		recurse => true,
@@ -64,29 +64,29 @@ class ddf($package = "enterprise",
 	# Setup the system service
 	file { "/etc/init.d/ddf":
 		content => template("ddf/ddf.erb"),
-		require => File["/usr/local/ddf-${package}-${version}"],
+		require => File["/usr/local/${package}-${version}"],
 		mode => 755
 	}
-	file { "/usr/local/ddf-${package}-${version}/lib/libwrapper.so":
+	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
 		source => "puppet:///modules/ddf/libwrapper.so",
-		require => File["/usr/local/ddf-${package}-${version}"],
+		require => File["/usr/local/${package}-${version}"],
 		mode => 644
 	}
-	file { "/usr/local/ddf-${package}-${version}/lib/karaf-wrapper.jar":
+	file { "/usr/local/${package}-${version}/lib/karaf-wrapper.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper.jar",
-		require => File["/usr/local/ddf-${package}-${version}"],
+		require => File["/usr/local/${package}-${version}"],
 		mode => 644
 	}
-	file { "/usr/local/ddf-${package}-${version}/lib/karaf-wrapper-main.jar":
+	file { "/usr/local/${package}-${version}/lib/karaf-wrapper-main.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper-main.jar",
-		require => File["/usr/local/ddf-${package}-${version}"],
+		require => File["/usr/local/${package}-${version}"],
 		mode => 644
 	}  
-	file { "/usr/local/ddf-${package}-${version}/bin/DDF-wrapper":
+	file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 		source => "puppet:///modules/ddf/DDF-wrapper",
 		mode => 755,
 	} 
-	file { "/usr/local/ddf-${package}-${version}/etc/DDF-wrapper.conf":
+	file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
 		mode => 644,
 		content => template("ddf/DDF-wrapper.conf.erb")
 	}
@@ -97,8 +97,8 @@ class ddf($package = "enterprise",
 		hasstatus => true,
 		hasrestart => true,
 		require => [File["/etc/init.d/ddf"],
-					File["/usr/local/ddf-${package}-${version}/bin/DDF-wrapper"],
-					File["/usr/local/ddf-${package}-${version}/etc/DDF-wrapper.conf"],]
+					File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
+					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"],]
 	}
 
 
