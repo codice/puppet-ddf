@@ -1,5 +1,6 @@
 class ddf($package = "ddf-enterprise",
-		  $version = "2.1.0.ALPHA7") {
+	  $version = "2.1.0.ALPHA7",
+	  $start = 'false') {
 
 	case $operatingsystem {
 		centos: {
@@ -91,14 +92,16 @@ class ddf($package = "ddf-enterprise",
 		content => template("ddf/DDF-wrapper.conf.erb")
 	}
 
-	service { "ddf":
-		ensure => running,
-		enable => true,
-		hasstatus => true,
-		hasrestart => true,
-		require => [File["/etc/init.d/ddf"],
+	if $start == 'true' {
+		service { "ddf":
+			ensure => running,
+			enable => true,
+			hasstatus => true,
+			hasrestart => true,
+			require => [File["/etc/init.d/ddf"],
 					File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
 					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"],]
+		}
 	}
 
 
