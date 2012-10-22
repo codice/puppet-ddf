@@ -55,11 +55,15 @@ class ddf($package = "ddf-enterprise",
 		require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
 	}
 
-	file { "/usr/local/${package}-${version}":
-		owner => "ddf",
-		group => "ddf",
-		recurse => true,
-		require => Exec["unzip /tmp/ddf.zip"],
+	# Puppet's recurse takes forever.  Switch to exec 'chown'
+	#file { "/usr/local/${package}-${version}":
+	#	owner => "ddf",
+	#	group => "ddf",
+	#	recurse => true,
+	#	require => Exec["unzip /tmp/ddf.zip"],
+	#}
+	exec { "chown -R ddf:ddf /usr/local/${package}-${version}":
+		require => [Exec["unzip /tmp/ddf/zip"], User['ddf']],
 	}
 
 	# Setup the system service
