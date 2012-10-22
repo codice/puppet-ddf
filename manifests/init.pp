@@ -64,27 +64,27 @@ class ddf($package = "ddf-enterprise",
 	#}
 	exec { "chown -R ddf:ddf /usr/local/${package}-${version}":
 		require => [Exec["unzip /tmp/ddf.zip"], User['ddf']],
-	}
+	} 
 
 	# Setup the system service
 	file { "/etc/init.d/ddf":
 		content => template("ddf/ddf.erb"),
-		require => File["/usr/local/${package}-${version}"],
+		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
 		mode => 755
 	}
 	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
 		source => "puppet:///modules/ddf/libwrapper.so",
-		require => File["/usr/local/${package}-${version}"],
+		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
 		mode => 644
 	}
 	file { "/usr/local/${package}-${version}/lib/karaf-wrapper.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper.jar",
-		require => File["/usr/local/${package}-${version}"],
+		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
 		mode => 644
 	}
 	file { "/usr/local/${package}-${version}/lib/karaf-wrapper-main.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper-main.jar",
-		require => File["/usr/local/${package}-${version}"],
+		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
 		mode => 644
 	}  
 	file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
