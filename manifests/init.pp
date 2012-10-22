@@ -63,7 +63,7 @@ class ddf($package = "ddf-enterprise",
 	#	require => Exec["unzip /tmp/ddf.zip"],
 	#}
 	exec { "chown -R ddf:ddf /usr/local/${package}-${version}":
-		require => [Exec["unzip /tmp/ddf/zip"], User['ddf']],
+		require => [Exec["unzip /tmp/ddf.zip"], User['ddf']],
 	}
 
 	# Setup the system service
