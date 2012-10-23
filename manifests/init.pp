@@ -1,5 +1,5 @@
 class ddf($package = "ddf-enterprise",
-	  $version = "2.1.0.ALPHA7",
+	  $version = "2.1.0.ALPHA8",
 	  $start = 'false') {
 
 	case $operatingsystem {
