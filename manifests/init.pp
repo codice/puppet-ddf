@@ -89,11 +89,13 @@ class ddf($package = "ddf-enterprise",
 	}  
 	file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 		source => "puppet:///modules/ddf/DDF-wrapper",
+		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
 		mode => 755,
 	} 
 	file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
 		mode => 644,
-		content => template("ddf/DDF-wrapper.conf.erb")
+		content => template("ddf/DDF-wrapper.conf.erb"),
+		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"], 
 	}
 
 	if $start == 'true' {
