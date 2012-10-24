@@ -17,8 +17,11 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 
-# This is a hack to set it before Karaf starts
-export JAVA_HOME=<%= @java_home %>
+# This is a hack to set it before Karaf starts, to fix an SSH cipher prob.
+if [ -x readlink ]; then
+  [ -z $JAVA_HOME ] && export JAVA_HOME="$(readlink -f /usr/bin/javac | sed 's:/bin/javac::')"
+  [ -z $JAVA_HOME ] && export JAVA_HOME="$(readlink -f /usr/bin/java | sed 's:/bin/java::')"
+fi
 
 # Application
 APP_NAME="DDF"
