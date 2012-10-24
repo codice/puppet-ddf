@@ -86,12 +86,21 @@ class ddf($package = "ddf-enterprise",
 		source => "puppet:///modules/ddf/karaf-wrapper-main.jar",
 		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
 		mode => 644
-	}  
-	file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
-		source => "puppet:///modules/ddf/DDF-wrapper",
-		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
-		mode => 755,
-	} 
+	}
+
+	if $architecture == 'x86_64' {  
+		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
+			source => "puppet:///modules/ddf/DDF-wrapper",
+			require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+			mode => 755,
+		} 
+	} else {
+		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
+			source => "puppet:///modules/ddf/DDF-wrapper-32",
+			require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+			mode => 755,
+		} 
+	}
 	file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
 		mode => 644,
 		content => template("ddf/DDF-wrapper.conf.erb"),
