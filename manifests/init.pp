@@ -1,6 +1,5 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.1.0.ALPHA6",
-	  $start = 'false') {
+	  $version = "2.1.0.ALPHA6"){
 
 	case $operatingsystem {
 		centos: {
@@ -14,25 +13,14 @@ class ddf($package = "ddf-standard",
 		}
 	}
 
-
-	if $start == 'true' {
-		service { "ddf":
-			ensure => running,
-			enable => true,
-			hasstatus => true,
-			hasrestart => true,
-			require => [	File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
-					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"]]
-		}
-	} else {
-		service { "ddf":
-			ensure => stopped,
-			enable => true,
-			hasstatus => true,
-			hasrestart => true,
-			require => [	File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
-					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"]]
-		}
+	service { "ddf":
+		ensure => running,
+		enable => true,
+		hasstatus => true,
+		hasrestart => true,
+		subscribe => File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"],
+		require => [	File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
+				File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"]]
 	}
 
 	# Ensure system dependencies are installed
@@ -62,7 +50,12 @@ class ddf($package = "ddf-standard",
 	exec { "rm /root/.wgetrc":
 		require => Exec["get_ddf"]
 	} 
-	
+
+	exec { "stop_ddf":
+    		command => "/etc/init.d/ddf stop",
+	    	onlyif => "grep -c ddf /etc/init.d/ddf",
+	}
+		
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
 		exec { "unzip /tmp/ddf.zip":
@@ -80,7 +73,7 @@ class ddf($package = "ddf-standard",
 			command => "unzip /tmp/ddf.zip; mv ddf-${version} ${package}-${version}",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
-			require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
+			require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],
 		} ->
 		exec { "rm -rf /tmp/ddf.zip": }
 		exec { "chown":
@@ -90,19 +83,11 @@ class ddf($package = "ddf-standard",
 	}
 
 	# Setup the system service
-	if $start == true {
-		file { "/etc/init.d/ddf":
-			notify => Service["ddf"],
-			content => template("ddf/ddf.erb"),
-			require => Exec["chown"],
-			mode => 755,
-		}
-	} else {
-		file { "/etc/init.d/ddf":
-			content => template("ddf/ddf.erb"),
-			require => Exec["chown"],
-			mode => 755,
-		}
+	file { "/etc/init.d/ddf":
+		notify => Service["ddf"],
+		content => template("ddf/ddf.erb"),
+		require => [Exec["chown"],Exec["stop_ddf"]],
+		mode => 755,
 	}
 	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
 		source => "puppet:///modules/ddf/libwrapper.so",
@@ -137,7 +122,7 @@ class ddf($package = "ddf-standard",
 	file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
 		mode => 644,
 		content => template("ddf/DDF-wrapper.conf.erb"),
-		require => Exec["chown"],
+		require => [File["/etc/init.d/ddf"],Exec["chown"]]
 	}
 
 
