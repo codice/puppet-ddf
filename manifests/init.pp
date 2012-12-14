@@ -4,20 +4,13 @@ class ddf($package = "ddf-standard",
 
 	case $operatingsystem {
 		centos: {
-			package{ "postgresql-server": ensure => installed }
 			package{ "java": name => "java-1.6.0-openjdk", ensure => installed }
 			$java_home = "/usr/lib/jvm/jre-1.6.0-openjdk.x86_64"
 		}
 		ubuntu: { 
 			exec { "apt-get update": } ->
 			package{ "java": name => "openjdk-6-jre-headless", ensure => installed }
-
-			# Unfortunately this only exists in Ubuntu
-			package{ "postgresql-9.1-postgis": ensure => installed }
-
 			$java_home = "/usr/lib/jvm/java-6-openjdk-amd64"
-
-
 		}
 	}
 
@@ -96,14 +89,6 @@ class ddf($package = "ddf-standard",
 		} 
 	}
 
-	# Puppet's recurse takes forever.  Switch to exec 'chown'
-	#file { "/usr/local/${package}-${version}":
-	#	owner => "ddf",
-	#	group => "ddf",
-	#	recurse => true,
-	#	require => Exec["unzip /tmp/ddf.zip"],
-	#}
-
 	# Setup the system service
 	if $start == true {
 		file { "/etc/init.d/ddf":
@@ -135,6 +120,7 @@ class ddf($package = "ddf-standard",
 		mode => 644
 	}
 
+	# Setup the appropriate wrapper
 	if $architecture == 'x86_64' {  
 		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 			source => "puppet:///modules/ddf/DDF-wrapper",
