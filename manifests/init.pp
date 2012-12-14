@@ -1,5 +1,5 @@
-class ddf($package = "ddf-enterprise",
-	  $version = "2.1.0.ALPHA9",
+class ddf($package = "ddf-standard",
+	  $version = "2.1.0.ALPHA6",
 	  $start = 'false') {
 
 	case $operatingsystem {
@@ -21,6 +21,27 @@ class ddf($package = "ddf-enterprise",
 		}
 	}
 
+
+	if $start == 'true' {
+		service { "ddf":
+			ensure => running,
+			enable => true,
+			hasstatus => true,
+			hasrestart => true,
+			require => [	File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
+					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"]]
+		}
+	} else {
+		service { "ddf":
+			ensure => stopped,
+			enable => true,
+			hasstatus => true,
+			hasrestart => true,
+			require => [	File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
+					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"]]
+		}
+	}
+
 	# Ensure system dependencies are installed
 	package{ "unzip": ensure => installed }
 	
@@ -38,7 +59,8 @@ class ddf($package = "ddf-enterprise",
 
 	exec { "get_ddf":
 		cwd => "/tmp",
-		command => "wget https://visualsvn.macefusion.com/svn/DDF/file_releases/ddf/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
+		#command => "wget https://visualsvn.macefusion.com/svn/DDF/file_releases/ddf/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
+		command => "wget https://nexus.macefusion.com/nexus/content/repositories/releases/com/lmco/ddf/${package}/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
 		creates => "/tmp/ddf.zip",
 		timeout => 3600,
 		require => File["set_wgetrc"]
@@ -47,12 +69,31 @@ class ddf($package = "ddf-enterprise",
 	exec { "rm /root/.wgetrc":
 		require => Exec["get_ddf"]
 	} 
-
+	
+	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
-	exec { "unzip /tmp/ddf.zip":
-		cwd => "/usr/local",
-		creates => "/usr/local/${package}-${version}",
-		require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
+		exec { "unzip /tmp/ddf.zip":
+			cwd => "/usr/local",
+			creates => "/usr/local/${package}-${version}",
+			require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
+		} ->
+		exec { "rm -rf /tmp/ddf.zip": }
+		exec { "chown":
+			command => "chown -R ddf:ddf /usr/local/${package}-${version}",
+			require => [Exec["unzip /tmp/ddf.zip"], User['ddf']],
+		} 
+	} else {
+		exec { "unzip":
+			command => "unzip /tmp/ddf.zip; mv ddf-${version} ${package}-${version}",
+			cwd => "/usr/local",
+			creates => "/usr/local/${package}-${version}",
+			require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
+		} ->
+		exec { "rm -rf /tmp/ddf.zip": }
+		exec { "chown":
+			command => "chown -R ddf:ddf /usr/local/${package}-${version}",
+			require => [Exec["unzip"], User['ddf']],
+		} 
 	}
 
 	# Puppet's recurse takes forever.  Switch to exec 'chown'
@@ -62,62 +103,57 @@ class ddf($package = "ddf-enterprise",
 	#	recurse => true,
 	#	require => Exec["unzip /tmp/ddf.zip"],
 	#}
-	exec { "chown -R ddf:ddf /usr/local/${package}-${version}":
-		require => [Exec["unzip /tmp/ddf.zip"], User['ddf']],
-	} 
 
 	# Setup the system service
-	file { "/etc/init.d/ddf":
-		content => template("ddf/ddf.erb"),
-		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
-		mode => 755
+	if $start == true {
+		file { "/etc/init.d/ddf":
+			notify => Service["ddf"],
+			content => template("ddf/ddf.erb"),
+			require => Exec["chown"],
+			mode => 755,
+		}
+	} else {
+		file { "/etc/init.d/ddf":
+			content => template("ddf/ddf.erb"),
+			require => Exec["chown"],
+			mode => 755,
+		}
 	}
 	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
 		source => "puppet:///modules/ddf/libwrapper.so",
-		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+		require => Exec["chown"],
 		mode => 644
 	}
 	file { "/usr/local/${package}-${version}/lib/karaf-wrapper.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper.jar",
-		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+		require => Exec["chown"],
 		mode => 644
 	}
 	file { "/usr/local/${package}-${version}/lib/karaf-wrapper-main.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper-main.jar",
-		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+		require => Exec["chown"],
 		mode => 644
 	}
 
 	if $architecture == 'x86_64' {  
 		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 			source => "puppet:///modules/ddf/DDF-wrapper",
-			require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+			require => Exec["chown"],
 			mode => 755,
 		} 
 	} else {
 		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 			source => "puppet:///modules/ddf/DDF-wrapper-32",
-			require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"],
+			require => Exec["chown"],
 			mode => 755,
 		} 
 	}
 	file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
 		mode => 644,
 		content => template("ddf/DDF-wrapper.conf.erb"),
-		require => Exec["chown -R ddf:ddf /usr/local/${package}-${version}"], 
+		require => Exec["chown"],
 	}
 
-	if $start == 'true' {
-		service { "ddf":
-			ensure => running,
-			enable => true,
-			hasstatus => true,
-			hasrestart => true,
-			require => [File["/etc/init.d/ddf"],
-					File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
-					File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"],]
-		}
-	}
 
 
 }
