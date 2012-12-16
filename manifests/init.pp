@@ -124,6 +124,11 @@ class ddf($package = "ddf-standard",
 		content => template("ddf/DDF-wrapper.conf.erb"),
 		require => [File["/etc/init.d/ddf"],Exec["chown"]]
 	}
+	file { "/usr/local/${package}-${version}/etc/startup.properties":
+		mode => 644,
+		source => "puppet:///modules/ddf/startup.properties",
+		require => [File["/etc/init.d/ddf"],Exec["chown"]]
+	}
 
 
 
