@@ -84,7 +84,7 @@ class ddf($package = "ddf-standard",
 	file { "/etc/init.d/ddf":
 		notify => Service["ddf"],
 		content => template("ddf/ddf.erb"),
-		require => [Exec["chown"],Exec["stop_ddf"]],
+		require => [Exec["chown"],Exec["stop_ddf"],File["/usr/local/${package}-${version}/etc/startup.properties"]]
 		mode => 755,
 	}
 	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
