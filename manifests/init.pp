@@ -69,7 +69,7 @@ class ddf($package = "ddf-standard",
 		} 
 	} else {
 		exec { "unzip":
-			command => "unzip /tmp/${version}/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
+			command => "unzip /tmp/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],
