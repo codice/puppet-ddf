@@ -45,6 +45,12 @@ class ddf($package = "ddf-standard",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
 		require => File["set_wgetrc"]
+	} -> 
+	exec { "get_sigar":
+		cwd => "/tmp",
+		command => "wget https://tools.codice.org/artifacts/content/repositories/releases/ddf/thirdparty/sigar/1.6.5.132-2/sigar-1.6.5.132-2.jar",
+		creates => "/tmp/sigar-1.6.5.132-2.jar",
+		timeout => 600,
 	}
 
 	exec { "rm /root/.wgetrc":
@@ -127,7 +133,10 @@ class ddf($package = "ddf-standard",
 		source => "puppet:///modules/ddf/startup.properties",
 		require => Exec["chown"]
 	}
-
+	file { "/usr/local/${package}-${version}/deploy/sigar.jar":
+		source => "/tmp/sigar-1.6.5.132-2.jar",
+		require => Exec["chown"]
+	}
 
 
 }
