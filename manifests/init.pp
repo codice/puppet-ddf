@@ -125,7 +125,7 @@ class ddf($package = "ddf-standard",
 	file { "/usr/local/${package}-${version}/etc/startup.properties":
 		mode => 644,
 		source => "puppet:///modules/ddf/startup.properties",
-		require => [File["/etc/init.d/ddf"],Exec["chown"]]
+		require => Exec["chown"]
 	}
 
 
