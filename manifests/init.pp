@@ -41,8 +41,8 @@ class ddf($package = "ddf-standard",
 	exec { "get_ddf":
 		cwd => "/tmp",
 		#command => "wget https://visualsvn.macefusion.com/svn/DDF/file_releases/ddf/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
-		command => "wget https://nexus.macefusion.com/nexus/content/repositories/releases/com/lmco/ddf/${package}/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
-		creates => "/tmp/ddf.zip",
+		command => "wget https://nexus.macefusion.com/nexus/content/repositories/releases/com/lmco/ddf/${package}/${version}/${package}-${version}.zip --no-check-certificate",
+		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
 		require => File["set_wgetrc"]
 	}
@@ -58,24 +58,22 @@ class ddf($package = "ddf-standard",
 		
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
-		exec { "unzip /tmp/ddf.zip":
+		exec { "unzip /tmp/${version}/${package}-${version}.zip":
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
 		} ->
-		exec { "rm -rf /tmp/ddf.zip": }
 		exec { "chown":
 			command => "chown -R ddf:ddf /usr/local/${package}-${version}",
 			require => [Exec["unzip /tmp/ddf.zip"], User['ddf']],
 		} 
 	} else {
 		exec { "unzip":
-			command => "unzip /tmp/ddf.zip; mv ddf-${version} ${package}-${version}",
+			command => "unzip /tmp/${version}/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],
 		} ->
-		exec { "rm -rf /tmp/ddf.zip": }
 		exec { "chown":
 			command => "chown -R ddf:ddf /usr/local/${package}-${version}",
 			require => [Exec["unzip"], User['ddf']],
