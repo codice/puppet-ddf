@@ -60,6 +60,7 @@ class ddf($package = "ddf-standard",
 	exec { "stop_ddf":
     		command => "/etc/init.d/ddf stop",
 	    	onlyif => "grep -c ddf /etc/init.d/ddf",
+		returns => [0,1]
 	}
 		
 	if $package == 'ddf-enterprise' {
