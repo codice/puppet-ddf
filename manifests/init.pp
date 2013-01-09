@@ -40,8 +40,7 @@ class ddf($package = "ddf-standard",
 
 	exec { "get_ddf":
 		cwd => "/tmp",
-		#command => "wget https://visualsvn.macefusion.com/svn/DDF/file_releases/ddf/${version}/${package}-${version}.zip -O ddf.zip --no-check-certificate",
-		command => "wget https://nexus.macefusion.com/nexus/content/repositories/releases/com/lmco/ddf/${package}/${version}/${package}-${version}.zip --no-check-certificate",
+		command => "wget https://nexus.macefusion.com/nexus/content/repositories/releases/ddf/${package}/${version}/${package}-${version}.zip --no-check-certificate",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
 		require => File["set_wgetrc"]
