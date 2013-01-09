@@ -1,5 +1,5 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.1.0.ALPHA6"){
+	  $version = "2.1.0.ALPHA11"){
 
 	case $operatingsystem {
 		centos: {
