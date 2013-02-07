@@ -1,5 +1,5 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.1.0-20130129-1341"){
+	  $version = "2.1.0.20130129-1341"){
 
 	service { "iptables": ensure => false }
 
