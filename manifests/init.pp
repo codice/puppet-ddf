@@ -22,7 +22,8 @@ class ddf($package = "ddf-standard",
 		hasrestart => true,
 		subscribe => File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"],
 		require => [	File["/usr/local/${package}-${version}/bin/DDF-wrapper"],
-				File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"]]
+				File["/usr/local/${package}-${version}/etc/DDF-wrapper.conf"],
+        File["/etc/init.d/ddf"]]
 	}
 
 	# Ensure system dependencies are installed
@@ -38,25 +39,21 @@ class ddf($package = "ddf-standard",
 		source => "puppet:///modules/ddf/wgetrc",
 		owner => "root",
 		group => "root"
-	}
-
+  } ->
 	exec { "get_ddf":
 		cwd => "/tmp",
 		command => "wget https://nexus.macefusion.com/nexus/content/groups/everything/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
-		require => File["set_wgetrc"]
-	}
-
+  } ->
 	exec { "rm /root/.wgetrc":
-		require => Exec["get_ddf"]
 	} 
 
-	exec { "stop_ddf":
-    		command => "/etc/init.d/ddf stop",
-	    	onlyif => "grep -c ddf /etc/init.d/ddf",
-		returns => [0,1]
-	}
+  # exec { "stop_ddf":
+  #         command => "/etc/init.d/ddf stop",
+  #       onlyif => "grep -c ddf /etc/init.d/ddf",
+  #   returns => [0,1]
+  # }
 		
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
@@ -78,7 +75,7 @@ class ddf($package = "ddf-standard",
 	file { "/etc/init.d/ddf":
 		notify => Service["ddf"],
 		content => template("ddf/ddf.erb"),
-		require => [Exec["stop_ddf"],File["/usr/local/${package}-${version}/etc/startup.properties"]],
+		require => File["/usr/local/${package}-${version}/etc/startup.properties"],
 		mode => 755,
 	}
 	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
