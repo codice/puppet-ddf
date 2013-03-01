@@ -1,7 +1,7 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.1.0.20130129-1341"){
+	  $version = "2.1.0.20130129-1341", $repo_user, $repo_pass){
 
-	service { "iptables": ensure => false }
+	service { "iptables": ensure => false, enable => false }
 
 	case $operatingsystem {
 		centos: {
@@ -33,27 +33,12 @@ class ddf($package = "ddf-standard",
 		ensure => 'present'
 	}
 
-	# Get the DDF distribution
-	file { "set_wgetrc":
-		path => "/root/.wgetrc",
-		source => "puppet:///modules/ddf/wgetrc",
-		owner => "root",
-		group => "root"
-  } ->
 	exec { "get_ddf":
 		cwd => "/tmp",
-		command => "wget https://nexus.macefusion.com/nexus/content/groups/everything/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
+		command => "wget --user=${repo_user} --password=${repo_pass} https://nexus.macefusion.com/nexus/content/groups/everything/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
-  } ->
-	exec { "rm /root/.wgetrc":
-	} 
-
-  # exec { "stop_ddf":
-  #         command => "/etc/init.d/ddf stop",
-  #       onlyif => "grep -c ddf /etc/init.d/ddf",
-  #   returns => [0,1]
-  # }
+  } 
 		
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
@@ -72,8 +57,9 @@ class ddf($package = "ddf-standard",
       notify => File["/usr/local/${package}-${version}"]
 		}
   }
+  
   file { "/usr/local/${package}-${version}":
-    ensure => directory,
+    ensure => directory
   }
   
 	# Setup the system service
