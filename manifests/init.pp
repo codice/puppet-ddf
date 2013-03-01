@@ -78,22 +78,19 @@ class ddf($package = "ddf-standard",
 	file { "/etc/init.d/ddf":
 		notify => Service["ddf"],
 		content => template("ddf/ddf.erb"),
-		require => [Exec["chown"],Exec["stop_ddf"],File["/usr/local/${package}-${version}/etc/startup.properties"]],
+		require => [Exec["stop_ddf"],File["/usr/local/${package}-${version}/etc/startup.properties"]],
 		mode => 755,
 	}
 	file { "/usr/local/${package}-${version}/lib/libwrapper.so":
 		source => "puppet:///modules/ddf/libwrapper.so",
-		require => Exec["chown"],
 		mode => 644
 	}
 	file { "/usr/local/${package}-${version}/lib/karaf-wrapper.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper.jar",
-		require => Exec["chown"],
 		mode => 644
 	}
 	file { "/usr/local/${package}-${version}/lib/karaf-wrapper-main.jar":
 		source => "puppet:///modules/ddf/karaf-wrapper-main.jar",
-		require => Exec["chown"],
 		mode => 644
 	}
 
@@ -101,25 +98,22 @@ class ddf($package = "ddf-standard",
 	if $architecture == 'x86_64' {  
 		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 			source => "puppet:///modules/ddf/DDF-wrapper",
-			require => Exec["chown"],
 			mode => 755,
 		} 
 	} else {
 		file { "/usr/local/${package}-${version}/bin/DDF-wrapper":
 			source => "puppet:///modules/ddf/DDF-wrapper-32",
-			require => Exec["chown"],
 			mode => 755,
 		} 
 	}
 	file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
 		mode => 644,
 		content => template("ddf/DDF-wrapper.conf.erb"),
-		require => [File["/etc/init.d/ddf"],Exec["chown"]]
+		require => File["/etc/init.d/ddf"]
 	}
 	file { "/usr/local/${package}-${version}/etc/startup.properties":
 		mode => 644,
 		source => "puppet:///modules/ddf/startup.properties",
-		require => Exec["chown"]
 	}
 
 }
