@@ -1,5 +1,5 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.1.0.20130129-1341", $repo_user = $repo_user, $repo_pass = $repo_pass){
+	  $version = "2.2.0-ALPHA3", $repo_user = $repo_user, $repo_pass = $repo_pass){
 
 	service { "iptables": ensure => false, enable => false }
 
