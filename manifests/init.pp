@@ -1,19 +1,9 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.2.0-ALPHA3", $repo_user = $repo_user, $repo_pass = $repo_pass){
+	  $version = "2.2.0.RC1"){
 
-	service { "iptables": ensure => false, enable => false }
-
-	case $operatingsystem {
-		centos: {
-			package{ "java": name => "java-1.6.0-openjdk", ensure => installed }
-			$java_home = "/usr/lib/jvm/jre-1.6.0-openjdk.x86_64"
-		}
-		ubuntu: { 
-			exec { "apt-get update": } ->
-			package{ "java": name => "openjdk-6-jre-headless", ensure => installed }
-			$java_home = "/usr/lib/jvm/java-6-openjdk-amd64"
-		}
-	}
+  if !defined(Service["iptables"]) {
+	  service { "iptables": ensure => false, enable => false }
+  }
 
 	service { "ddf":
 		ensure => running,
@@ -27,18 +17,20 @@ class ddf($package = "ddf-standard",
 	}
 
 	# Ensure system dependencies are installed
-	package{ "unzip": ensure => installed }
-	
+	if !defined(Package["unzip"]) {
+    package{ "unzip": ensure => installed }
+	}
+  
 	user { "ddf":
 		ensure => 'present'
 	}
-
+  
 	exec { "get_ddf":
 		cwd => "/tmp",
-		command => "wget --user=${repo_user} --password=${repo_pass} https://nexus.macefusion.com/nexus/content/groups/everything/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
+		command => "wget https://tools.codice.org/artifacts/content/repositories/releases/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
-  } 
+  }  
 		
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution

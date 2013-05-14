@@ -14,6 +14,18 @@ Once deployed, DDF access is available via SSH to port 8101 on the remote node. 
 
 I happen to be using this with [Vagrant](http://vagrantup.com) to rapidly provision a basic Ubuntu server with a DDF environment.
 
+---
+
+Requires Oracle Java: https://github.com/codice/ddf
+
+I'm using this module to get 'er installed:
+
+http://forge.puppetlabs.com/7terminals/java 
+
+Make sure you download it as modules/java.
+
+Just need to download from Oracle drop it in the modules/java/files subfolder of that java module and add to your site configuration.
+
 My manifest is super simple:
 
 ```
@@ -25,10 +37,16 @@ Exec {
   path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 }
 
+java::setup {'jdk-7u21-linux-x64':
+  source => 'jdk-7u21-linux-x64.tar.gz',
+  deploymentdir => '/usr/lib64/jvm/oracle-jdk7',
+  user => 'root',
+  pathfile => '/etc/profile.d/java.sh',
+  cachedir => "/tmp/java-setup-${name}"
+}
+
 class { "ddf": 
-  repo_user => 'repo.user',
-  repo_pass => 'repo.pass',
   version => "ddf-standard", 
-  package => "2.1.0.20130129-1341"
+  package => "2.2.0.RC1"
 }
 ```
