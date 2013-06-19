@@ -37,14 +37,14 @@ class ddf($package = "ddf-standard",
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
 		exec { "unzip_enterprise":
-      			command => "unzip /tmp/${version}/${package}-${version}.zip",
+      			command => "/usr/bin/unzip /tmp/${version}/${package}-${version}.zip",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
 		} 
 	} else {
 		exec { "unzip":
-			command => "unzip /tmp/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
+			command => "/usr/bin/unzip /tmp/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],
