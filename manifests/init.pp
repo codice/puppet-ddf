@@ -27,7 +27,7 @@ class ddf($package = "ddf-standard",
   
 	exec { "get_ddf":
 		cwd => "/tmp",
-		command => "wget https://tools.codice.org/artifacts/content/repositories/releases/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
+		command => "/usr/bin/wget https://tools.codice.org/artifacts/content/repositories/releases/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
   }  
