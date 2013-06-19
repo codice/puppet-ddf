@@ -17,9 +17,11 @@ class ddf($package = "ddf-standard",
 	}
 
 	# Ensure system dependencies are installed
-	if !defined(Package["unzip"]) {
-    package{ "unzip": ensure => installed }
-	}
+	
+    	package{ "unzip": 
+    		ensure => 'installed' 
+    	}
+	
   
 	user { "ddf":
 		ensure => 'present'
