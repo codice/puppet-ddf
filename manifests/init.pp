@@ -1,5 +1,6 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.2.0.RC1"){
+	  $version = "2.2.0.RC1",
+	  $java_home = "/usr/local/java"){
 
   if !defined(Service["iptables"]) {
 	  service { "iptables": ensure => false, enable => false }
