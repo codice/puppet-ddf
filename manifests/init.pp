@@ -1,5 +1,6 @@
 class ddf($package = "ddf-standard",
-	  $version = "2.2.0.RC1"){
+	  $version = "2.2.0.RC1",
+	  $java_home = "/usr/local/java"){
 
   if !defined(Service["iptables"]) {
 	  service { "iptables": ensure => false, enable => false }
@@ -17,32 +18,34 @@ class ddf($package = "ddf-standard",
 	}
 
 	# Ensure system dependencies are installed
-	if !defined(Package["unzip"]) {
-    package{ "unzip": ensure => installed }
-	}
+	
+
+	
   
 	user { "ddf":
 		ensure => 'present'
 	}
-  
+  	package{ "unzip": 
+    		ensure => 'installed' 
+    	} ->
 	exec { "get_ddf":
 		cwd => "/tmp",
-		command => "wget https://tools.codice.org/artifacts/content/repositories/releases/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
+		command => "/usr/bin/wget https://tools.codice.org/artifacts/content/repositories/releases/ddf/distribution/${package}/${version}/${package}-${version}.zip --no-check-certificate",
 		creates => "/tmp/${package}-${version}.zip",
 		timeout => 3600,
-  }  
+	}  
 		
 	if $package == 'ddf-enterprise' {
 	# Unpack the DDF distribution
 		exec { "unzip_enterprise":
-      command => "unzip /tmp/${version}/${package}-${version}.zip",
+      			command => "/usr/bin/unzip /tmp/${version}/${package}-${version}.zip",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
 		} 
 	} else {
 		exec { "unzip":
-			command => "unzip /tmp/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
+			command => "/usr/bin/unzip /tmp/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
 			cwd => "/usr/local",
 			creates => "/usr/local/${package}-${version}",
 			require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],

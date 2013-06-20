@@ -17,6 +17,10 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 
+<% if @java_home %>
+export JAVA_HOME=<%= @java_home %> 
+<% end %>
+
 # This is a hack to set it before Karaf starts, to fix an SSH cipher prob.
 if [ -x readlink ]; then
   [ -z $JAVA_HOME ] && export JAVA_HOME="$(readlink -f /usr/bin/javac | sed 's:/bin/javac::')"
