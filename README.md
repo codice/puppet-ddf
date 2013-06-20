@@ -47,6 +47,7 @@ java::setup {'jdk-7u21-linux-x64':
 
 class { "ddf": 
   version => "ddf-standard", 
-  package => "2.2.0.RC1"
+  package => "2.2.0.RC1",
+  java_home => "/usr/lib64/jvm/oracle-jdk7"
 }
 ```
