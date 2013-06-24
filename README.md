@@ -37,17 +37,22 @@ Exec {
   path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 }
 
-java::setup {'jdk-7u21-linux-x64':
-  source => 'jdk-7u21-linux-x64.tar.gz',
+java::setup {'jdk-7u25-linux-x64':
+  source        => 'jdk-7u25-linux-x64.tar.gz',
   deploymentdir => '/usr/lib64/jvm/oracle-jdk7',
-  user => 'root',
-  pathfile => '/etc/profile.d/java.sh',
-  cachedir => "/tmp/java-setup-${name}"
+  user          => 'root',
+  pathfile      => '/etc/profile.d/java.sh',
+  cachedir      => "/tmp/java-setup-${name}"
+} ->
+class { "ddf": 
+  package       => "ddf-standard", 
+  version       => "2.2.0.RC1",
+  java_home     => "/usr/lib64/jvm/oracle-jdk7",
+  mvn_repos     => ["http://artifacts.codice.org/content/repositories/releases",
+                "http://artifacts.codice.org/content/repositories/snapshots"],
+  feature_repos => ["mvn:org.codice/opendx-features/1.0.1/xml/features"],
+  features      => []
 }
 
-class { "ddf": 
-  version => "ddf-standard", 
-  package => "2.2.0.RC1",
-  java_home => "/usr/lib64/jvm/oracle-jdk7"
-}
 ```
+So, you can pass in extra Feature goodies, like a Maven repo, Feature repo and Features to start automatically.
