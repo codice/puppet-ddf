@@ -24,7 +24,14 @@ set.default.KARAF_DATA=/usr/local/<%= @package %>-<%= @version %>/data
 
 # Java Application
 wrapper.working.dir=%KARAF_BASE%
+
+<% if @java_home %>
+set.default.JAVA_HOME=<%= @java_home %>
+wrapper.java.command=%JAVA_HOME%/bin/java
+<% else %>
 wrapper.java.command=java
+<% end %>
+
 wrapper.java.mainclass=org.apache.karaf.shell.wrapper.Main
 wrapper.java.classpath.1=%KARAF_BASE%/lib/karaf-wrapper.jar
 wrapper.java.classpath.2=%KARAF_HOME%/lib/karaf.jar
