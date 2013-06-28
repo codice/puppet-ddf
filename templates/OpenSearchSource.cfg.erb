@@ -1,0 +1,23 @@
+#/*
+# * Copyright (c) Codice Foundation
+# *
+# * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either
+# * version 3 of the License, or any later version.
+# *
+# * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# * See the GNU Lesser General Public License for more details. A copy of the GNU Lesser General Public License is distributed along with this program and can be found at
+# * <http://www.gnu.org/licenses/lgpl.html>.
+# *
+# */
+#
+# OpenSearchSource Endpoints
+#
+service.factoryPid = OpenSearchSource
+trustStoreLocation = trustStore.jks
+trustStorePassword = password
+shortname = <%= scope.lookupvar('opensearch_source') %>
+keyStoreLocation = keyStore.jks
+endpointUrl = http://<%= scope.lookupvar('opensearch_source') %>:8181/services/catalog/query?q\={searchTerms}&src\={fs:routeTo?}&mr\={fs:maxResults?}&count\={count?}&mt\={fs:maxTimeout?}&dn\={idn:userDN?}&lat\={geo:lat?}&lon\={geo:lon?}&radius\={geo:radius?}&bbox\={geo:box?}&polygon\={geo:polygon?}&dtstart\={time:start?}&dtend\={time:end?}&dateName\={cat:dateName?}&filter\={fsa:filter?}&sort\={fsa:sort?}
+keyStorePassword = password
+localQueryOnly = false
+shouldConvertToBBox = true

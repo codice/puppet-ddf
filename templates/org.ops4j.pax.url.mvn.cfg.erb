@@ -87,4 +87,4 @@ org.ops4j.pax.url.mvn.defaultRepositories=file:${karaf.home}/${karaf.default.rep
 #    @snapshots  : the repository contains snaphots
 #    @noreleases : the repository does not contain any released artifacts
 #
-org.ops4j.pax.url.mvn.repositories=<% mvn_repos.each do |repo| %><%= repo %>,<% end %>
+org.ops4j.pax.url.mvn.repositories=<% @mvn_repos.each do |repo| %><%= repo %>,<% end %>

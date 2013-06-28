@@ -20,9 +20,9 @@
 #
 # Comma separated list of features repositories to register by default
 #
-featuresRepositories=mvn:ddf/ddf-standard/2.2.0.RC1/xml/features,<% feature_repos.each do |repo| %><%= repo %>,<% end %>
+featuresRepositories=mvn:ddf/ddf-standard/2.2.0.RC1/xml/features,<% @feature_repos.each do |repo| %><%= repo %>,<% end %>
 
 #
 # Comma separated list of features to install at startup
 #
-featuresBoot=platform-app,ddf-framework,ddf-system-settings-config,kernel-webconsolebranding,catalog-solr-embedded-provider,<% features.each do |feature| %><%= feature %><% end %>
+featuresBoot=platform-app,ddf-framework,ddf-system-settings-config,kernel-webconsolebranding,catalog-solr-embedded-provider,<% @features.each do |feature| %><%= feature %><% end %>

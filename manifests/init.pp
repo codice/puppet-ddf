@@ -5,7 +5,8 @@ class ddf($package = "ddf-standard",
   $mvn_repos = [],
   $feature_repos = [],
   $features = [],
-  $ddf_user = "ddf"  
+  $ddf_user = "ddf",
+  $opensearch_sources = []
 ){
 
   if !defined(Service["iptables"]) {
@@ -82,30 +83,23 @@ class ddf($package = "ddf-standard",
   file { "/usr/local/${package}-${version}/lib/libwrapper.so":
     source  => "puppet:///modules/ddf/libwrapper.so",
     mode    => "0644",
+    owner   => $ddf_user,
     group   => $ddf_user,
     require => File["/usr/local/${package}-${version}"]
   }
   file { "/usr/local/${package}-${version}/lib/karaf-wrapper.jar":
     source  => "puppet:///modules/ddf/karaf-wrapper.jar",
     mode    => "0644",
+    owner   => $ddf_user,
     group   => $ddf_user,
     require => File["/usr/local/${package}-${version}"]
   }
   file { "/usr/local/${package}-${version}/lib/karaf-wrapper-main.jar":
     source  => "puppet:///modules/ddf/karaf-wrapper-main.jar",
     mode    => "0644",
+    owner   => $ddf_user,
     group   => $ddf_user,
     require => File["/usr/local/${package}-${version}"]
-  }
-  file { "/usr/local/${package}-${version}/etc/org.ops4j.pax.url.mvn.cfg":
-    content => template("ddf/org.ops4j.pax.url.mvn.cfg.erb"),
-    mode    => "0644",
-    group   => $ddf_user                              
-  }
-  file { "/usr/local/${package}-${version}/etc/org.apache.karaf.features.cfg":
-    content => template("ddf/org.apache.karaf.features.cfg.erb"),
-    mode    => "0644",
-    group   => $ddf_user                              
   }
   # Setup the appropriate wrapper
   if $::architecture == 'x86_64' {  
@@ -113,6 +107,7 @@ class ddf($package = "ddf-standard",
       source  => "puppet:///modules/ddf/DDF-wrapper",
       mode    => "0755",
       group   => $ddf_user,
+      owner   => $ddf_user,
       require => File["/usr/local/${package}-${version}"]
     } 
   } else {
@@ -120,21 +115,48 @@ class ddf($package = "ddf-standard",
       source  => "puppet:///modules/ddf/DDF-wrapper-32",
       mode    => "0755",
       group   => $ddf_user,
+      owner   => $ddf_user,
       require => File["/usr/local/${package}-${version}"]
     } 
   }
   file { "/usr/local/${package}-${version}/etc/DDF-wrapper.conf":
     mode    => "0644",
     group   => $ddf_user,
+    owner   => $ddf_user,
     content => template("ddf/DDF-wrapper.conf.erb"),
     require => [File["/etc/init.d/ddf"],File["/usr/local/${package}-${version}"]]
   }
   file { "/usr/local/${package}-${version}/etc/startup.properties":
     mode    => "0644",
     group   => $ddf_user,
+    owner   => $ddf_user,
     source  => "puppet:///modules/ddf/startup.properties",
     require => File["/usr/local/${package}-${version}"]
   }
+  file { "/usr/local/${package}-${version}/etc/org.ops4j.pax.url.mvn.cfg":
+    content => template("ddf/org.ops4j.pax.url.mvn.cfg.erb"),
+    mode    => "0644",
+    owner   => $ddf_user,
+    group   => $ddf_user                              
+  }
+  file { "/usr/local/${package}-${version}/etc/org.apache.karaf.features.cfg":
+    content => template("ddf/org.apache.karaf.features.cfg.erb"),
+    mode    => "0644",
+    group   => $ddf_user,
+    owner   => $ddf_user                              
+  }
+  each($opensearch_sources) |$opensearch_source| {
+    file { "/usr/local/${package}-${version}/deploy/OpenSearchSource-${$opensearch_source}.cfg":
+      mode    => "0644",
+      group   => $ddf_user,
+      owner   => $ddf_user,
+      content => template("ddf/OpenSearchSource.cfg.erb"),
+      require => [File["/usr/local/${package}-${version}"],
+                  File["/usr/local/${package}-${version}/etc/org.apache.karaf.features.cfg"],
+                  File["/usr/local/${package}-${version}/etc/org.ops4j.pax.url.mvn.cfg"]]  
+    }
+  }
+
   file { "/usr/local/${package}-${version}":
     ensure  => "directory",
     group   => $ddf_user,
