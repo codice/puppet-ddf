@@ -1,6 +1,6 @@
 # Puppet module for deploying a basic DDF node (http://codice.github.com/ddf)
-class ddf($package = "ddf-standard",
-  $version = "2.2.0.RC1",
+class ddf($package = "ddf",
+  $version = "2.2.0.RC3",
   $java_home = "/usr/local/java",
   $mvn_repos = [],
   $feature_repos = [],
@@ -55,23 +55,14 @@ class ddf($package = "ddf-standard",
     timeout => 3600,
   }  
     
-  if $package == 'ddf-enterprise' {
-  # Unpack the DDF distribution
-    exec { "unzip_enterprise":
-      command => "/usr/bin/unzip /tmp/${version}/${package}-${version}.zip",
-      cwd     => "/usr/local",
-      creates => "/usr/local/${package}-${version}",
-      require => [Package["unzip"], Exec["get_ddf"], User['ddf']],
-    } 
-  } else {
-    exec { "unzip":
-      command => "/usr/bin/unzip /tmp/${package}-${version}.zip; mv ddf-${version} ${package}-${version}",
-      cwd     => "/usr/local",
-      creates => "/usr/local/${package}-${version}",
-      require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],
-      notify  => File["/usr/local/${package}-${version}"]
-    }
+  exec { "unzip":
+    command => "/usr/bin/unzip /tmp/${package}-${version}.zip",
+    cwd     => "/usr/local",
+    creates => "/usr/local/${package}-${version}",
+    require => [Package["unzip"], Exec["get_ddf"],  User['ddf']],
+    notify  => File["/usr/local/${package}-${version}"]
   }
+
       
   # Setup the system service
   file { "/etc/init.d/ddf":
