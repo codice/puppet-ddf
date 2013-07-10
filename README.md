@@ -45,14 +45,15 @@ java::setup {'jdk-7u25-linux-x64':
   cachedir      => "/tmp/java-setup-${name}"
 } ->
 class { "ddf": 
-  package       => "ddf-standard", 
-  version       => "2.2.0.RC1",
-  java_home     => "/usr/lib64/jvm/oracle-jdk7",
-  mvn_repos     => ["http://artifacts.codice.org/content/repositories/releases",
+  package            => "ddf", 
+  version            => "2.2.0.RC3",
+  java_home          => "/usr/lib64/jvm/oracle-jdk7",
+  mvn_repos          => ["http://artifacts.codice.org/content/repositories/releases",
                 "http://artifacts.codice.org/content/repositories/snapshots"],
-  feature_repos => ["mvn:org.codice/opendx-features/1.0.1/xml/features"],
-  features      => []
+  feature_repos      => ["mvn:org.codice/opendx-features/1.0.1/xml/features"],
+  features           => ["catalog-opensearch-source"],
+  ddf_user           => "ddf",
+  opensearch_sources => ['ddf2.local']
 }
-
 ```
 So, you can pass in extra Feature goodies, like a Maven repo, Feature repo and Features to start automatically.
