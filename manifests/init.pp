@@ -68,7 +68,7 @@ class ddf($package = "ddf",
   file { "/etc/init.d/ddf":
     notify  => Service["ddf"],
     content => template("ddf/ddf.erb"),
-    require => File["/usr/local/${package}-${version}/etc/startup.properties"],
+#    require => File["/usr/local/${package}-${version}/etc/startup.properties"],
     mode    => "0755"
   }
   file { "/usr/local/${package}-${version}/lib/libwrapper.so":
@@ -117,13 +117,13 @@ class ddf($package = "ddf",
     content => template("ddf/DDF-wrapper.conf.erb"),
     require => [File["/etc/init.d/ddf"],File["/usr/local/${package}-${version}"]]
   }
-  file { "/usr/local/${package}-${version}/etc/startup.properties":
-    mode    => "0644",
-    group   => $ddf_user,
-    owner   => $ddf_user,
-    source  => "puppet:///modules/ddf/startup.properties",
-    require => File["/usr/local/${package}-${version}"]
-  }
+#  file { "/usr/local/${package}-${version}/etc/startup.properties":
+#    mode    => "0644",
+#    group   => $ddf_user,
+#    owner   => $ddf_user,
+#    source  => "puppet:///modules/ddf/startup.properties",
+#    require => File["/usr/local/${package}-${version}"]
+#  }
   file { "/usr/local/${package}-${version}/etc/org.ops4j.pax.url.mvn.cfg":
     content => template("ddf/org.ops4j.pax.url.mvn.cfg.erb"),
     mode    => "0644",
