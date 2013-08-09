@@ -1,6 +1,6 @@
 # Puppet module for deploying a basic DDF node (http://codice.github.com/ddf)
 class ddf($package = "ddf",
-  $version = "2.2.0.RC3",
+  $version = "2.2.0.RC5",
   $java_home = "/usr/local/java",
   $mvn_repos = [],
   $feature_repos = [],
