@@ -46,11 +46,11 @@ java::setup {'jdk-7u25-linux-x64':
 } ->
 class { "ddf": 
   package            => "ddf", 
-  version            => "2.2.0.RC3",
+  version            => "2.2.0.RC5",
   java_home          => "/usr/lib64/jvm/oracle-jdk7",
   mvn_repos          => ["http://artifacts.codice.org/content/repositories/releases",
                 "http://artifacts.codice.org/content/repositories/snapshots"],
-  feature_repos      => ["mvn:org.codice/opendx-features/1.0.1/xml/features"],
+  feature_repos      => ["mvn:org.codice/opendx-features/1.5/xml/features"],
   features           => ["catalog-opensearch-source"],
   ddf_user           => "ddf",
   opensearch_sources => ['ddf2.local']
