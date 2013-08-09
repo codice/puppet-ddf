@@ -20,7 +20,7 @@
 #
 # Comma separated list of features repositories to register by default
 #
-featuresRepositories=mvn:ddf/<%= @package %>/<%= @version %>/xml/features,<% @feature_repos.each do |repo| %><%= repo %>,<% end %>
+featuresRepositories=mvn:ddf.distributions/<%= @package %>/<%= @version %>/xml/features,<% @feature_repos.each do |repo| %><%= repo %>,<% end %>
 
 #
 # Comma separated list of features to install at startup
