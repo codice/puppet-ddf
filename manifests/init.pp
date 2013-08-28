@@ -1,12 +1,15 @@
 # Puppet module for deploying a basic DDF node (http://codice.github.com/ddf)
 class ddf($package = "ddf",
-  $version = "2.2.0.RC5",
+  $version = "2.2.0",
   $java_home = "/usr/local/java",
   $mvn_repos = [],
   $feature_repos = [],
   $features = [],
   $ddf_user = "ddf",
-  $opensearch_sources = []
+  $opensearch_sources = [],
+  $ddf_port = "8181",
+  $ddf_host = "0.0.0.0",
+  $organization = "My Organization"
 ){
 
   if !defined(Service["iptables"]) {
@@ -135,6 +138,13 @@ class ddf($package = "ddf",
     mode    => "0644",
     group   => $ddf_user,
     owner   => $ddf_user                              
+  }
+  file { "/usr/local/${package}-${version}/deploy/ddf.catalog.config.cfg":
+    content => template("ddf/ddf.catalog.config.cfg.erb"),
+    mode    => "0644",
+    owner   => $ddf_user,
+    group   => $ddf_user,
+    require => File["/usr/local/${package}-${version}"]
   }
   each($opensearch_sources) |$opensearch_source| {
     file { "/usr/local/${package}-${version}/deploy/OpenSearchSource-${$opensearch_source}.cfg":
