@@ -8,6 +8,9 @@ A Puppet module for deploying a basic/raw DDF node.
 action.  It is possible to extend this module with the provisioning of
 the various configuration files required by Karaf and DDF.**
 
+**Requires 'parser = future' setting in the main puppet.conf configuration
+on the agent side, only available in Puppet 3.2+**
+
 Once deployed, DDF access is available via SSH to port 8101 on the remote node.  User credentials are specified in the remote ${ddf_home}/etc/users.properties file.
 
 ---
