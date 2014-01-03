@@ -27,6 +27,8 @@ if [ -x readlink ]; then
   [ -z $JAVA_HOME ] && export JAVA_HOME="$(readlink -f /usr/bin/java | sed 's:/bin/java::')"
 fi
 
+RUN_AS_USER=<%= @ddf_user %>
+
 # Application
 APP_NAME="DDF"
 APP_LONG_NAME="DDF"
